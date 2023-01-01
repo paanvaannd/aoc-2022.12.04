@@ -3,24 +3,33 @@
 # Import built-in libraries
 from collections import namedtuple
 
-Pair = namedtuple("Pair", "first, second")
+Pair = namedtuple("Pair", "elf_one, elf_two")
 Assignment = namedtuple("Assignment", "beginning, end")
 
 with open("data.txt", "r") as file:
     data = file.read().splitlines()
 
-overlap_counter: int = 0
+complete_overlaps: int = 0
+partial_overlaps: int = 0
 line: int
 for line in range(len(data)):
-    assignments: list = [_line.split("-") for _line in data[line].split(sep=",")]
-    pair = Pair(assignments[0], assignments[1])
-    first = Assignment(int(pair.first[0]), int(pair.first[1]))
-    second = Assignment(int(pair.second[0]), int(pair.second[1]))
+    _pair: list
+    assignments: list = [_pair.split("-") for _pair in data[line].split(sep=",")]
+    pair = Pair(elf_one=Assignment(beginning=int(assignments[0][0]),
+                                   end=int(assignments[0][1])),
+                elf_two=Assignment(beginning=int(assignments[1][0]),
+                                   end=int(assignments[1][1])))
 
-    if ((first.beginning <= second.beginning and
-         first.end >= second.end) or 
-        (second.beginning <= first.beginning and
-         second.end >= first.end)):
-        overlap_counter += 1
+    if ((pair.elf_one.beginning <= pair.elf_two.beginning and  # part 1
+         pair.elf_one.end >= pair.elf_two.end) or 
+        (pair.elf_two.beginning <= pair.elf_one.beginning and
+         pair.elf_two.end >= pair.elf_one.end)):
+        complete_overlaps += 1
+    else:  # part 2
+        if any(set(range(pair.elf_one.beginning, pair.elf_one.end + 1)) &
+               set(range(pair.elf_two.beginning, pair.elf_two.end + 1))):
+            partial_overlaps += 1
 
-print(f"{overlap_counter} completely overlapping assignments detected.")
+all_overlaps: int = partial_overlaps + complete_overlaps
+print(f"{complete_overlaps} section assignments overlapped completely.\n"
+      f"{all_overlaps} section assgnments overlapped to any degree.")

@@ -12,9 +12,9 @@ with open("data.txt", "r") as file:
 complete_overlaps: int = 0
 partial_overlaps: int = 0
 line: int
-for line in range(len(data)):
+for line in data:
     _pair: list
-    assignments: list = [_pair.split("-") for _pair in data[line].split(sep=",")]
+    assignments: list = [_pair.split("-") for _pair in line.split(sep=",")]
     pair = Pair(elf_one=Assignment(beginning=int(assignments[0][0]),
                                    end=int(assignments[0][1])),
                 elf_two=Assignment(beginning=int(assignments[1][0]),
